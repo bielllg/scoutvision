@@ -29,14 +29,14 @@ function normalize(value: string) {
 
 function Brand() {
   return (
-    <Link className="brand" href="/" aria-label="ScoutVision, dashboard">
+    <Link className="brand" href="/" aria-label="Campo 90, dashboard">
       <svg className="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
         <rect width="48" height="48" rx="13" fill="currentColor" />
         <path d="M24 9 39 24 24 39 9 24Z" fill="#182922" />
         <path d="M24 15 33 24 24 33 15 24Z" fill="none" stroke="currentColor" strokeWidth="1.6" />
         <circle cx="24" cy="24" r="2.5" fill="currentColor" />
       </svg>
-      <span>ScoutVision</span>
+      <span>Campo 90</span>
     </Link>
   );
 }
@@ -53,7 +53,7 @@ export default function Shell({ children, searchItems, context }: {
   const resultLinks = useRef<(HTMLAnchorElement | null)[]>([]);
   const [query, setQuery] = useState('');
   const [activeResult, setActiveResult] = useState(-1);
-  const [prefetchPath, setPrefetchPath] = useState('');
+  const [prefetchReady, setPrefetchReady] = useState(false);
   const terms = normalize(query).trim().split(/\s+/).filter(Boolean);
   const results = (terms.length
     ? searchItems.filter((item) => {
@@ -81,6 +81,16 @@ export default function Shell({ children, searchItems, context }: {
     return () => window.removeEventListener('keydown', onShortcut);
   }, []);
 
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') return;
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(() => setPrefetchReady(true), { timeout: 1200 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const id = setTimeout(() => setPrefetchReady(true), 800);
+    return () => clearTimeout(id);
+  }, []);
+
   function onSearchKeys(event: KeyboardEvent) {
     if (!results.length) return;
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -105,9 +115,7 @@ export default function Shell({ children, searchItems, context }: {
           const active = href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`);
           return (
             <Link key={href} href={href} aria-label={label} title={label} aria-current={active ? 'page' : undefined} className="nav-link"
-              prefetch={!active && prefetchPath === href}
-              onPointerEnter={() => setPrefetchPath(href)}
-              onFocus={() => setPrefetchPath(href)}
+              prefetch={!active && prefetchReady}
               onClick={() => navigationDialog.current?.close()}>
               <Icon size={17} strokeWidth={1.7} aria-hidden="true" />
               <span>{label}</span><NavigationProgress />
@@ -122,9 +130,7 @@ export default function Shell({ children, searchItems, context }: {
     return (
       <div className="sidebar-footer">
         <Link href="/configuracoes" className="nav-link" aria-label="Configurações" title="Configurações" aria-current={pathname === '/configuracoes' ? 'page' : undefined}
-          prefetch={pathname !== '/configuracoes' && prefetchPath === '/configuracoes'}
-          onPointerEnter={() => setPrefetchPath('/configuracoes')}
-          onFocus={() => setPrefetchPath('/configuracoes')}
+          prefetch={pathname !== '/configuracoes' && prefetchReady}
           onClick={() => navigationDialog.current?.close()}>
           <NavigationProgress />
           <Settings size={17} strokeWidth={1.7} aria-hidden="true" />
@@ -143,9 +149,9 @@ export default function Shell({ children, searchItems, context }: {
       <a className="skip-link" href="#conteudo">Ir para o conteúdo</a>
       <aside className="sidebar">
         <Brand />
-        <button className="sidebar-search" type="button" aria-label="Buscar no ScoutVision" aria-haspopup="dialog" aria-keyshortcuts="Control+k Meta+k" title="Buscar no ScoutVision (Ctrl+K)" onClick={openSearch}>
+        <button className="sidebar-search" type="button" aria-label="Buscar no Campo 90" aria-haspopup="dialog" aria-keyshortcuts="Control+k Meta+k" title="Buscar no Campo 90 (Ctrl+K)" onClick={openSearch}>
           <Search size={16} aria-hidden="true" />
-          <span>Buscar no ScoutVision</span>
+          <span>Buscar no Campo 90</span>
           <kbd>Ctrl K</kbd>
         </button>
         {renderNav()}
@@ -154,7 +160,7 @@ export default function Shell({ children, searchItems, context }: {
       <div className="mobile-topbar">
         <button className="icon-button" type="button" aria-label="Abrir navegação" aria-haspopup="dialog" onClick={() => navigationDialog.current?.showModal()}><Menu size={20} /></button>
         <Brand />
-        <button className="icon-button" type="button" aria-label="Buscar no ScoutVision" aria-haspopup="dialog" onClick={openSearch}><Search size={19} /></button>
+        <button className="icon-button" type="button" aria-label="Buscar no Campo 90" aria-haspopup="dialog" onClick={openSearch}><Search size={19} /></button>
       </div>
       <main className="main-content" id="conteudo" tabIndex={-1}>
         {children}
@@ -184,11 +190,11 @@ export default function Shell({ children, searchItems, context }: {
           </div>
         </div>
       </dialog>
-      <dialog className="mobile-navigation" ref={navigationDialog} aria-label="Navegação do ScoutVision"
+      <dialog className="mobile-navigation" ref={navigationDialog} aria-label="Navegação do Campo 90"
         onClick={(event) => { if (event.target === event.currentTarget) navigationDialog.current?.close(); }}>
         <div className="mobile-navigation-inner">
           <div className="mobile-nav-head">
-            <span className="mobile-nav-title">ScoutVision</span>
+            <span className="mobile-nav-title">Campo 90</span>
             <button type="button" className="icon-button" aria-label="Fechar navegação" onClick={() => navigationDialog.current?.close()}><X size={19} /></button>
           </div>
           {renderNav()}

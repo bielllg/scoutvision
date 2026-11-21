@@ -28,7 +28,7 @@ export async function downloadReport(title: string, context: string, lines: stri
   let y = 22;
   pdf.setFont("helvetica", "bold");
   pdf.setFontSize(20);
-  pdf.text("ScoutVision", left, y);
+  pdf.text("Campo 90", left, y);
   if (logo) {
     const format = pdf.getImageProperties(logo);
     pdf.addImage(logo, "PNG", 150, 12, 40, 40 * format.height / format.width, "statsbomb", "FAST");

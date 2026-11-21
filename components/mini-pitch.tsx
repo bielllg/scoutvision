@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
+import { Pause, Play } from "lucide-react";
 
 const pitchStrokes = [
   { path: "M180 72a32 32 0 1 1 0 64a32 32 0 1 1 0-64", delay: 160, duration: 350 },
@@ -203,8 +204,9 @@ export function MiniPitch() {
       ))}
     </svg>
     <button className="link-button world-cup-replay-toggle" type="button"
+      aria-label={paused ? "Reproduzir animação do campo" : "Pausar animação do campo"}
       onClick={() => setPaused((value) => !value)}>
-      {paused ? "Reiniciar animação do campo" : "Pausar animação do campo"}
+      {paused ? <Play size={16} aria-hidden="true" /> : <Pause size={16} aria-hidden="true" />}
     </button>
     </>
   );

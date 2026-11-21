@@ -44,7 +44,9 @@ test("Dashboard: movimento reduzido, pausa e rodapé sem imagem", async ({ page 
   expect(images.some((url) => url.includes("statsbomb.png"))).toBe(false);
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.getByRole("button", { name: "Pausar animação do campo" }).press("Space");
-  await expect(page.getByRole("button", { name: "Reiniciar animação do campo" })).toBeFocused();
+  const resume = page.getByRole("button", { name: "Reproduzir animação do campo" });
+  await expect(resume).toBeFocused();
+  await expect(resume).toHaveText("");
   await expect(page.locator(".world-cup-ball")).toHaveAttribute("visibility", "hidden");
 });
 

@@ -49,7 +49,7 @@ function MatchTable({ matches, label = "Partidas" }: { matches: Match[]; label?:
           {matches.map((match) => (
             <tr key={match.id}>
               <td style={{ whiteSpace: "nowrap" }}>{dateLabel(match.date)}</td>
-              <td><Link href={`/partidas/${match.id}`}>{match.home} × {match.away}</Link></td>
+              <td><Link prefetch={false} href={`/partidas/${match.id}`}>{match.home} × {match.away}</Link></td>
               <td style={{ whiteSpace: "nowrap" }}><Score match={match} /></td>
               <td className="muted">{match.stage}{match.group ? ` · ${match.group}` : ""}</td>
             </tr>
@@ -113,7 +113,7 @@ export function Dashboard({ data }: DataProps) {
             {scoringTeams.map((team) => (
               <div key={team.id}>
                 <div className="toolbar" style={{ justifyContent: "space-between" }}>
-                  <Link href={`/equipes/${team.id}`}>{team.name}</Link><strong className="positive">{team.gf}</strong>
+                  <Link prefetch={false} href={`/equipes/${team.id}`}>{team.name}</Link><strong className="positive">{team.gf}</strong>
                 </div>
                 <div aria-hidden="true" style={{ height: 6, background: "#263130", borderRadius: 6, overflow: "hidden", marginTop: 5 }}>
                   <div className="scout-ranking-bar" style={{ height: "100%", width: `${100 * team.gf / (scoringTeams[0]?.gf || 1)}%`, background: "#b9ed63", borderRadius: 6 }} />
@@ -196,7 +196,7 @@ function TeamTable({ teams }: { teams: Team[] }) {
         <thead><tr><th>Seleção</th><th>Jogos</th><th>Vitórias</th><th>Empates</th><th>Derrotas</th><th>Gols pró</th><th>Gols contra</th><th>Saldo</th></tr></thead>
         <tbody>{teams.map((team) => (
           <tr key={team.id}>
-            <td><Link href={`/equipes/${team.id}`}>{team.name}</Link></td>
+            <td><Link prefetch={false} href={`/equipes/${team.id}`}>{team.name}</Link></td>
             <td>{team.games}</td><td>{team.wins}</td><td>{team.draws}</td><td>{team.losses}</td>
             <td className="positive">{team.gf}</td><td>{team.ga}</td><td>{team.gf - team.ga}</td>
           </tr>
@@ -269,7 +269,7 @@ export function Teams({ data, teamId, comparisonId }: DataProps & { teamId?: num
             <table>
               <thead><tr><th>Jogador</th><th>Minutos</th><th>Gols</th><th>Assist.</th></tr></thead>
               <tbody>{players.slice(0, 8).map((player) => (
-                <tr key={player.id}><td><Link href={`/jogadores/${player.id}`}>{player.shortName || player.name}</Link></td><td>{player.minutes}</td><td>{player.goals}</td><td>{player.assists}</td></tr>
+                <tr key={player.id}><td><Link prefetch={false} href={`/jogadores/${player.id}`}>{player.shortName || player.name}</Link></td><td>{player.minutes}</td><td>{player.goals}</td><td>{player.assists}</td></tr>
               ))}</tbody>
             </table>
           </div>
@@ -337,7 +337,7 @@ function GroupTable({ data, group }: DataProps & { group: string }) {
         <tbody>{standings.map((team, index) => (
           <tr key={team.id}>
             <td>{tieUnresolved ? "—" : index + 1}</td>
-            <td><Link href={`/equipes/${team.id}`}>{team.name}</Link></td>
+            <td><Link prefetch={false} href={`/equipes/${team.id}`}>{team.name}</Link></td>
             <td>{team.games}</td><td>{team.gf}</td><td>{team.ga}</td><td>{team.gf - team.ga}</td><td className="positive"><strong>{team.points}</strong></td>
           </tr>
         ))}</tbody>
@@ -502,7 +502,7 @@ export function MatchDetail({ data, matchId, appearances }: DataProps & { matchI
                     const player = players.get(row.playerId);
                     return (
                       <tr key={row.playerId}>
-                        <td>{row.shirt ?? "—"} {player && <Link href={`/jogadores/${player.id}`}>{player.shortName || player.name}</Link>}</td>
+                        <td>{row.shirt ?? "—"} {player && <Link prefetch={false} href={`/jogadores/${player.id}`}>{player.shortName || player.name}</Link>}</td>
                         <td>{row.starter ? "Titular" : row.played ? "Entrou" : "Banco"}</td>
                         <td>{row.minutes}</td><td>{row.goals}</td><td>{row.xg == null ? "—" : number.format(row.xg)}</td>
                       </tr>

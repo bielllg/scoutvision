@@ -1,4 +1,4 @@
-# ScoutVision
+# Campo 90
 
 Aplicação de scouting e análise de futebol com dados históricos reais. O recorte analítico é a **Copa do Mundo masculina de 2022**. Perfis, classificações por grupo, comparações e mapas são derivados da mesma base.
 
@@ -12,7 +12,7 @@ npm run data:import
 npm run dev -- --port 3030
 ~~~
 
-Abra [ScoutVision](http://localhost:3030). Para conferir a aplicação com um caso conhecido, abra [Brasil x Sérvia](http://localhost:3030/partidas/3857258), [perfil de Richarlison](http://localhost:3030/jogadores/3280) e [comparador](http://localhost:3030/comparador).
+Abra [Campo 90](http://localhost:3030). Para conferir a aplicação com um caso conhecido, abra [Brasil x Sérvia](http://localhost:3030/partidas/3857258), [perfil de Richarlison](http://localhost:3030/jogadores/3280) e [comparador](http://localhost:3030/comparador).
 
 A importação fixa uma revisão pública da StatsBomb, baixa escalações e eventos de 64 partidas e persiste o recorte em SQLite, em **.data/scoutvision.sqlite**. A mesma revisão é reutilizada nas próximas execuções. O arquivo pode ser redirecionado com **SCOUTVISION_DB_PATH** no ambiente do importador e do servidor. O serviço local roda offline depois da importação.
 

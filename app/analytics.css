@@ -297,7 +297,7 @@
   aspect-ratio: 420 / 260;
   margin-inline: auto;
 }
-.world-cup-replay-toggle { position: absolute; bottom: 0; right: 9%; min-height: 28px; }
+.world-cup-replay-toggle { position: absolute; bottom: 0; right: 9%; min-width: 32px; min-height: 32px; justify-content: center; }
 @media (prefers-reduced-motion: reduce) {
   html[data-motion="system"] .world-cup-replay-toggle { display: none; }
 }

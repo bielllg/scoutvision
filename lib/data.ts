@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { cache } from 'react';
@@ -143,8 +143,11 @@ const playersSql = positionsSql + `
   ORDER BY games DESC, p.name
 `;
 
-function withSnapshot<T>(read: (db: DatabaseSync) => T): T | null {
-  const path = resolve(/* turbopackIgnore: true */ process.env.SCOUTVISION_DB_PATH || '.data/scoutvision.sqlite');
+function snapshotPath() {
+  return resolve(/* turbopackIgnore: true */ process.env.SCOUTVISION_DB_PATH || '.data/scoutvision.sqlite');
+}
+
+function withSnapshot<T>(read: (db: DatabaseSync) => T, path = snapshotPath()): T | null {
   if (!existsSync(/* turbopackIgnore: true */ path)) return null;
   const db = new DatabaseSync(path, { readOnly: true });
   try {
@@ -158,7 +161,7 @@ function withSnapshot<T>(read: (db: DatabaseSync) => T): T | null {
   }
 }
 
-export function getData(): ScoutData | null {
+function readData(path: string): ScoutData | null {
   return withSnapshot((db) => {
     const meta = Object.fromEntries(db.prepare('SELECT name, value FROM metadata').all()
       .map(({ name, value }) => [name as string, value as string]));
@@ -179,7 +182,28 @@ export function getData(): ScoutData | null {
       revision: meta.revision,
       eventCount: Number(meta.spatialEvents),
     };
-  });
+  }, path);
+}
+
+function snapshotStamp(path: string) {
+  const stamp = (file: string) => {
+    const stat = statSync(/* turbopackIgnore: true */ file, { bigint: true, throwIfNoEntry: false });
+    return stat ? `${stat.ino}:${stat.size}:${stat.mtimeNs}:${stat.ctimeNs}` : "";
+  };
+  const database = stamp(path);
+  return database ? `${database}:${stamp(path + '-wal')}` : "";
+}
+
+let cachedData: { path: string; stamp: string; data: ScoutData } | undefined;
+
+export function getData(): ScoutData | null {
+  const path = snapshotPath();
+  const stamp = snapshotStamp(path);
+  if (stamp && cachedData?.path === path && cachedData.stamp === stamp) return cachedData.data;
+
+  const data = readData(path);
+  cachedData = data && stamp && stamp === snapshotStamp(path) ? { path, stamp, data } : undefined;
+  return data;
 }
 
 export const getRequestData = cache(getData);

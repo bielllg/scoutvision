@@ -31,7 +31,7 @@ export default async function ScoutPage({ params, searchParams }: {
     </Panel>
   </>;
 
-  const { players, matches, teams, updated } = data;
+  const { players, matches, teams, updated, revision } = data;
   const richarlison = players.find((player) => player.shortName === "Richarlison");
   const defaultPlayer = richarlison ?? players.toSorted((a, b) => b.goals - a.goals)[0];
 
@@ -39,7 +39,7 @@ export default async function ScoutPage({ params, searchParams }: {
   switch (route) {
     case "": content = <Dashboard data={data} />; break;
     case "jogadores": {
-      if (!detail) { content = <Players data={data} initialQuery={param(query.q)} />; break; }
+      if (!detail) { content = <Players data={{ players, teams, updated }} initialQuery={param(query.q)} />; break; }
       const player = players.find((entry) => String(entry.id) === detail);
       if (!player) notFound();
       content = <Profile player={player} players={players} matches={matches} appearances={getAppearances(player.id)} events={getEvents(player.id)} updated={updated} full={query.partidas === "todas"} series={query.serie === "jogo"} />;
@@ -83,7 +83,7 @@ export default async function ScoutPage({ params, searchParams }: {
       content = <Maps players={players.map(({ id, name, shortName, team, position }) => ({ id, name, shortName, team, position }))} playerId={player.id} matchId={matchId} invalidMatch={invalidMatch} events={invalidMatch ? [] : getEvents(player.id, matchId)} matches={playerMatches} revision={data.revision} updated={updated} />;
       break;
     }
-    case "analise": if (detail) notFound(); content = <Analysis data={data} timeline={<TournamentTimeline matches={matches} year="2022" />} />; break;
+    case "analise": if (detail) notFound(); content = <Analysis data={{ players, revision, updated }} timeline={<TournamentTimeline matches={matches} year="2022" />} />; break;
     case "favoritos": if (detail) notFound(); content = <Favorites players={players} revision={data.revision} />; break;
     case "configuracoes": if (detail) notFound(); content = <Settings data={data} motion={await getMotionMode()} />; break;
     default: notFound();

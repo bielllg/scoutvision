@@ -8,9 +8,9 @@ import './globals.css';
 import './analytics.css';
 
 export const metadata: Metadata = {
-  title: { default: 'ScoutVision', template: '%s · ScoutVision' },
+  title: { default: 'Campo 90', template: '%s · Campo 90' },
   description: 'Explore dados de futebol, compare jogadores e analise ações em campo.',
-  icons: { icon: '/scoutvision.svg' },
+  icons: { icon: { url: '/campo-90-icon.png', sizes: '64x64', type: 'image/png' } },
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {

@@ -217,7 +217,7 @@ export function Rankings({ players }: { players: Player[] }) {
             <thead><tr><th scope="col">Jogador</th><th scope="col">Seleção</th><th scope="col" className="numeric">{metrics[metric].label}</th></tr></thead>
             <tbody>{ranked.map((player) => (
               <tr key={player.id}>
-                <td><Link href={`/jogadores/${player.id}`}>{playerLabel(player)}</Link></td>
+                <td><Link prefetch={false} href={`/jogadores/${player.id}`}>{playerLabel(player)}</Link></td>
                 <td className="muted">{player.team}</td><td className="positive numeric"><strong>{format(metrics[metric].value(player))}</strong></td>
               </tr>
             ))}</tbody>
@@ -228,7 +228,7 @@ export function Rankings({ players }: { players: Player[] }) {
   );
 }
 
-export function Players({ data, initialQuery }: { data: Data; initialQuery?: string }) {
+export function Players({ data, initialQuery }: { data: Pick<Data, "players" | "teams" | "updated">; initialQuery?: string }) {
   const params = useSearchParams();
   const pageSize = usePageSize();
   const [personal, updatePersonal] = usePersonal();
@@ -371,8 +371,8 @@ export function Players({ data, initialQuery }: { data: Data; initialQuery?: str
                 </tr></thead>
                 <tbody>{rows.map((player) => (
                   <tr key={player.id}>
-                    <td><Link href={`/jogadores/${player.id}`}>{playerLabel(player)}</Link></td>
-                    <td><Link href={`/equipes/${player.teamId}`}>{player.team}</Link></td>
+                    <td><Link prefetch={false} href={`/jogadores/${player.id}`}>{playerLabel(player)}</Link></td>
+                    <td><Link prefetch={false} href={`/equipes/${player.teamId}`}>{player.team}</Link></td>
                     <td className="muted">{player.position || player.role || "—"}</td>
                     {visible.map((key) => <td key={key} className={key === "goals" ? "numeric positive" : "numeric"}>{format(metrics[key].value(player))}</td>)}
                   </tr>
@@ -493,7 +493,7 @@ function Distribution({ points, label }: { points: Point[]; label: string }) {
   );
 }
 
-export function Analysis({ data, timeline }: { data: Data; timeline: ReactNode }) {
+export function Analysis({ data, timeline }: { data: Pick<Data, "players" | "revision" | "updated">; timeline: ReactNode }) {
   const params = useSearchParams();
   const [expanded, setExpanded] = useState(false);
   const chartRef = useRef<SVGSVGElement>(null);
@@ -633,7 +633,7 @@ export function Analysis({ data, timeline }: { data: Data; timeline: ReactNode }
             <table>
               <thead><tr><th>Atleta</th><th>Seleção</th><th>Minutos</th><th>{xLabel}</th><th>{yLabel}</th></tr></thead>
               <tbody>{(expanded ? points : points.slice(0, 15)).map((point) => (
-                <tr key={point.player.id}><td><Link href={`/jogadores/${point.player.id}`}>{playerLabel(point.player)}</Link></td><td>{point.player.team}</td><td>{point.player.minutes}</td><td>{format(point.x)}</td><td>{format(point.y)}</td></tr>
+                <tr key={point.player.id}><td><Link prefetch={false} href={`/jogadores/${point.player.id}`}>{playerLabel(point.player)}</Link></td><td>{point.player.team}</td><td>{point.player.minutes}</td><td>{format(point.x)}</td><td>{format(point.y)}</td></tr>
               ))}</tbody>
             </table>
           </div>
@@ -679,7 +679,7 @@ export function Favorites({ players, revision }: { players: Player[]; revision?:
             <ul className="stack" style={{ listStyle: "none", padding: 0, margin: 0 }}>
               {favorites.map((player) => (
                 <li key={player.id} className="toolbar" style={{ justifyContent: "space-between" }}>
-                  <div><Link href={`/jogadores/${player.id}`}>{playerLabel(player)}</Link><small className="muted" style={{ display: "block" }}>{player.team}</small></div>
+                  <div><Link prefetch={false} href={`/jogadores/${player.id}`}>{playerLabel(player)}</Link><small className="muted" style={{ display: "block" }}>{player.team}</small></div>
                   <button type="button" className="button" aria-label={`Remover ${playerLabel(player)} dos favoritos`} onClick={() => {
                     updatePersonal((current) => ({ ...current, favorites: current.favorites.filter((id) => id !== player.id) }));
                     setNotice("Atleta removido dos favoritos.");
