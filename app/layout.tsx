@@ -28,6 +28,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       href: '/equipes/' + team.id,
     })),
     { label: 'Copa do Mundo 2022', detail: 'Competição · StatsBomb Open Data', href: '/competicoes/copa-2022' },
+    { label: 'Copa do Mundo 2018', detail: 'Resultados · StatsBomb Open Data', href: '/competicoes/copa-2018' },
     { label: 'Brasileirão Série A 2026', detail: 'Competição · referência oficial da CBF', href: '/competicoes/brasileirao-2026' },
   ] : [];
   return (

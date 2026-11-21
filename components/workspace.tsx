@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import type { getData, Player } from "../lib/data";
 import { csvContent, downloadFile } from "../lib/export";
 import { per90, ratio } from "../lib/metrics";
@@ -156,7 +156,7 @@ export function LocalPreferences({ initialMotion }: { initialMotion: "full" | "s
       <label className="field">Animações da interface
         <select value={motion} onChange={(event) => {
           const mode = event.target.value;
-          document.cookie = `scout-motion=${mode}; Path=/; Max-Age=31536000; SameSite=Lax`;
+          document.cookie = `scout-motion=${mode}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
           document.documentElement.dataset.motion = mode;
           window.dispatchEvent(new Event("scout-motion-change"));
         }}>
@@ -493,7 +493,7 @@ function Distribution({ points, label }: { points: Point[]; label: string }) {
   );
 }
 
-export function Analysis({ data }: { data: Data }) {
+export function Analysis({ data, timeline }: { data: Data; timeline: ReactNode }) {
   const params = useSearchParams();
   const [expanded, setExpanded] = useState(false);
   const chartRef = useRef<SVGSVGElement>(null);
@@ -639,6 +639,7 @@ export function Analysis({ data }: { data: Data }) {
           </div>
         </Panel>
       </div>
+      <div style={{ marginTop: 16 }}>{timeline}</div>
       <SourceNote updated={data.updated} />
     </>
   );

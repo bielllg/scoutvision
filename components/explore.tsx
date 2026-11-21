@@ -1,8 +1,10 @@
+import { MiniPitch } from "./mini-pitch";
 import {
   Activity, ArrowRight, CalendarDays, ExternalLink, Flag, Goal, BarChart3,
   MapPin, Shield, Target, Trophy, UsersRound,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { getMatchGoals, getTeamGoalPeriods } from "../lib/data";
 import type { Appearance, Match, Team, getData } from "../lib/data";
 import { CardStat, ContextPill, Empty, initials, PageHead, Panel } from "./ui";
@@ -70,29 +72,6 @@ function Source({ data }: DataProps) {
   );
 }
 
-function MiniPitch() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 420 260" style={{ width: "100%", height: "auto" }}>
-      <defs>
-        <radialGradient id="overview-pitch-glow">
-          <stop stopColor="#b9ed63" stopOpacity=".23" />
-          <stop offset="1" stopColor="#b9ed63" stopOpacity="0" />
-        </radialGradient>
-        <pattern id="overview-pitch-grid" width="36" height="24" patternUnits="userSpaceOnUse">
-          <path d="M36 0H0v24" fill="none" stroke="#bcf182" strokeOpacity=".13" />
-        </pattern>
-      </defs>
-      <rect width="420" height="260" fill="url(#overview-pitch-glow)" />
-      <g transform="translate(57 35)" stroke="#bbeb90" strokeOpacity=".68" fill="none" strokeWidth="1.2">
-        <rect width="306" height="190" rx="2" fill="url(#overview-pitch-grid)" />
-        <path d="M153 0v190 M0 40h56v110H0 M306 40h-56v110h56 M0 72h18v46H0 M306 72h-18v46h18" />
-        <circle cx="153" cy="95" r="30" /><circle cx="153" cy="95" r="2.5" fill="#bbeb90" />
-        <path d="M57 74a30 30 0 0 1 0 42 M249 74a30 30 0 0 0 0 42" />
-      </g>
-    </svg>
-  );
-}
-
 export function Dashboard({ data }: DataProps) {
   const matches = [...data.matches].sort((a, b) => b.date.localeCompare(a.date) || b.round - a.round);
   const final = matches.find((match) => match.stage === "Final");
@@ -106,17 +85,17 @@ export function Dashboard({ data }: DataProps) {
         <Link className="button primary" href="/jogadores"><UsersRound size={16} /> Explorar jogadores</Link>
       </PageHead>
       {final && (
-        <section className="panel split" style={{ background: "linear-gradient(108deg, #20372b, #192724 55%, #172322)", alignItems: "center", overflow: "hidden" }}>
-          <div style={{ padding: "clamp(20px, 3vw, 38px)", minWidth: 0 }}>
-            <p className="eyebrow positive"><Trophy size={15} /> Mundial masculino · Catar</p>
-            <h2 style={{ margin: "10px 0 12px", fontSize: "clamp(26px, 4vw, 42px)", lineHeight: 1.1, letterSpacing: "-.045em" }}>Copa do Mundo 2022</h2>
-            <p className="muted" style={{ margin: "0 0 20px" }}>Final · {final.home} × {final.away}</p>
+        <section className="panel split world-cup-banner" aria-labelledby="world-cup-title">
+          <div className="world-cup-copy">
+            <p className="eyebrow"><Trophy size={15} /> Mundial masculino · Catar</p>
+            <h2 id="world-cup-title">Copa do Mundo 2022</h2>
+            <p className="world-cup-final">Final · {final.home} × {final.away}</p>
             <div className="toolbar">
-              <span className="pill"><Score match={final} /></span>
+              <span className="pill world-cup-score"><Score match={final} /></span>
               <Link className="button" href={`/partidas/${final.id}`}>Ver final <ArrowRight size={16} /></Link>
             </div>
           </div>
-          <div style={{ maxWidth: 420, marginInline: "auto", width: "100%" }}><MiniPitch /></div>
+          <div className="world-cup-illustration"><MiniPitch /></div>
         </section>
       )}
       <div className="stats-grid" style={{ marginTop: 16 }}>
@@ -399,6 +378,9 @@ export function Competitions({ data, competitionId, round, group, matchGroup }: 
             <p className="toolbar"><span className="pill positive">{data.matches.length} partidas</span><span className="pill">{data.teams.length} seleções</span></p>
             <Link href="/competicoes/copa-2022" className="button primary">Explorar competição <ArrowRight size={16} /></Link>
           </Panel>
+          <Panel title="Copa do Mundo 2018" description="Rússia · calendário e placares históricos">
+            <Link href="/competicoes/copa-2018" className="button">Ver resultados e comparar edições <ArrowRight size={16} /></Link>
+          </Panel>
           <Panel title="Brasileirão Série A 2026" description="CBF · fonte oficial externa">
             <p className="muted">Jogos, classificação e documentos disponíveis na CBF.</p>
             <Link href="/competicoes/brasileirao-2026" className="button">Ver cobertura <ArrowRight size={16} /></Link>
@@ -421,6 +403,7 @@ export function Competitions({ data, competitionId, round, group, matchGroup }: 
   return (
     <>
       <PageHead section="Competições" title={edition} description="Catar · 20 de novembro a 18 de dezembro de 2022.">
+        <Link className="button" href="/competicoes/copa-2018">Comparar com 2018</Link>
         <a className="button" href={fifa}>Fonte oficial FIFA <ExternalLink size={15} /></a>
       </PageHead>
       <div className="split">
@@ -547,6 +530,9 @@ export function Settings({ data, motion }: DataProps & { motion: "full" | "syste
       <div className="split scout-settings-grid">
         <div id="cobertura" style={{ scrollMarginTop: 24 }}>
           <Panel title="Cobertura dos dados" description={`StatsBomb Open Data · Copa do Mundo 2022 · ${number.format(data.eventCount)} eventos espaciais`} action={<BarChart3 size={19} />}>
+          <a className="source-badge" href={statsbomb}>
+            <Image src="/statsbomb.png" width={84} height={14} alt="StatsBomb Open Data" unoptimized />
+          </a>
           <div className="table-wrap" tabIndex={0} role="region" aria-label="Matriz de cobertura">
             <table>
               <thead><tr><th>Granularidade</th><th>Disponibilidade</th></tr></thead>
@@ -557,6 +543,7 @@ export function Settings({ data, motion }: DataProps & { motion: "full" | "syste
                 <tr><td>Eventos, coordenadas e xG por chute</td><td className="positive">Conforme evento</td></tr>
                 <tr><td>xA do provedor e rastreamento contínuo</td><td className="muted">Indisponíveis</td></tr>
                 <tr><td>Brasileirão Série A 2026</td><td><Link className="link-button" href="/competicoes/brasileirao-2026">Referência oficial</Link></td></tr>
+                <tr><td>Copa do Mundo 2018</td><td><Link className="link-button" href="/competicoes/copa-2018">Resultados de 64 partidas</Link></td></tr>
               </tbody>
             </table>
           </div>

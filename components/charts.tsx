@@ -114,12 +114,15 @@ export function Pitch({ events, mode = "density", onSelect, selected, animate = 
   </div>;
 }
 
-export function Evolution({ rows, label }: { rows: { id: number; label: string; value: number }[]; label: string }) {
+export function Evolution({ rows, label, valuesLabel = "Valores por jogo" }: {
+  rows: { id: number; label: string; value: number }[]; label: string; valuesLabel?: string;
+}) {
   if (!rows.length) return <p className="muted">Nenhuma participação registrada.</p>;
   const max = Math.max(1, ...rows.map(({ value }) => value));
   const step = Math.max(1, Math.ceil(max / 3));
   const points = rows.map((row, index) => ({ x: 47 + (rows.length === 1 ? 260 : index * 511 / (rows.length - 1)), y: 119 - row.value / (step * 3) * 88, ...row }));
   const line = points.map(({ x, y }) => x + "," + y).join(" ");
+  const labelStep = Math.ceil(points.length / 9);
   return <>
     <svg className="scout-evolution" viewBox="0 0 600 152" role="img" aria-label={label}>
       {[0, 1, 2, 3].map((index) => {
@@ -131,8 +134,8 @@ export function Evolution({ rows, label }: { rows: { id: number; label: string; 
         <polyline points={line} stroke="#b9ed63" strokeWidth="2.6" vectorEffect="non-scaling-stroke" strokeLinejoin="round" fill="none" />
         {points.map((point) => <circle key={point.id} cx={point.x} cy={point.y} r="4" fill="#b9ed63" stroke="#192624" strokeWidth="1.5"><title>{point.label + " · " + point.value}</title></circle>)}
       </g>
-      {points.map((point) => <text key={point.id} x={point.x} y="141" textAnchor="middle" fill="#a8bbb2" fontSize="10">{point.label}</text>)}
+      {points.filter((_, index) => index % labelStep === 0).map((point) => <text key={point.id} x={point.x} y="141" textAnchor="middle" fill="#a8bbb2" fontSize="10">{point.label}</text>)}
     </svg>
-    <details className="chart-details"><summary>Valores por jogo</summary><ul>{rows.map((row) => <li key={row.id}>{row.label} · {row.value}</li>)}</ul></details>
+    <details className="chart-details"><summary>{valuesLabel}</summary><ul>{rows.map((row) => <li key={row.id}>{row.label} · {row.value}</li>)}</ul></details>
   </>;
 }

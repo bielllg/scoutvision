@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Compare } from "@/components/compare";
 import { Competitions, Dashboard, MatchDetail, Settings, Teams } from "@/components/explore";
@@ -11,6 +10,7 @@ import { Analysis, Favorites, Players } from "@/components/workspace";
 import { getAppearances, getRequestData, getEvents, getMatchLineups } from "@/lib/data";
 import { metricIds, type MetricId } from "@/lib/metrics";
 import { getMotionMode } from "@/lib/motion";
+import { TournamentTimeline, WorldCupArchive } from "@/components/tournament-history";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +51,7 @@ export default async function ScoutPage({ params, searchParams }: {
       break;
     }
     case "competicoes":
+      if (detail === "copa-2018") { content = <WorldCupArchive matches2022={matches} stage={param(query.fase)} />; break; }
       if (detail && !["copa-2022", "brasileirao-2026"].includes(detail)) notFound();
       content = <Competitions data={data} competitionId={detail} round={param(query.rodada)} group={param(query.grupo)} matchGroup={param(query.grupoPartidas)} />;
       break;
@@ -82,7 +83,7 @@ export default async function ScoutPage({ params, searchParams }: {
       content = <Maps players={players.map(({ id, name, shortName, team, position }) => ({ id, name, shortName, team, position }))} playerId={player.id} matchId={matchId} invalidMatch={invalidMatch} events={invalidMatch ? [] : getEvents(player.id, matchId)} matches={playerMatches} revision={data.revision} updated={updated} />;
       break;
     }
-    case "analise": if (detail) notFound(); content = <Analysis data={data} />; break;
+    case "analise": if (detail) notFound(); content = <Analysis data={data} timeline={<TournamentTimeline matches={matches} year="2022" />} />; break;
     case "favoritos": if (detail) notFound(); content = <Favorites players={players} revision={data.revision} />; break;
     case "configuracoes": if (detail) notFound(); content = <Settings data={data} motion={await getMotionMode()} />; break;
     default: notFound();
@@ -91,7 +92,8 @@ export default async function ScoutPage({ params, searchParams }: {
     <PageEntrance key={slug.join("/")}>{content}</PageEntrance>
     <footer className="scout-data-footer">
       <span>Dados históricos · Importação {dateLabel(updated)}</span>
-      <a className="scout-source-logo" href="https://github.com/hudl/open-data"><Image src="/statsbomb.png" width={84} height={14} alt="StatsBomb Open Data" unoptimized /></a><Link href="/configuracoes#cobertura">Fontes e cobertura</Link>
+      <a href="https://github.com/hudl/open-data">StatsBomb Open Data</a>
+      <Link href="/configuracoes#cobertura">Fontes e cobertura</Link>
     </footer>
   </>;
 }
