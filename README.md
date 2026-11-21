@@ -23,7 +23,7 @@ A importação fixa uma revisão pública da StatsBomb, baixa escalações e eve
 - O comparador usa minutos nominais de jogo e a mesma amostra por atleta. Os percentis usam jogadores da mesma posição com pelo menos 180 minutos, exigindo 10 observações por métrica. As regras completas ficam em **Configurações → Metodologia**.
 - A edição de 2026 do Brasileirão tem ligação para a tabela oficial da CBF. A instalação atual tem cobertura analítica local para a Copa de 2022. [Tabela oficial da CBF](https://www.cbf.com.br/futebol-brasileiro/tabelas/campeonato-brasileiro/serie-a/2026)
 - A Copa de 2018 inclui calendário, fases e placares de 64 partidas, além de comparação de gols com 2022. Para reconstruir o arquivo a partir da revisão fixada, execute `node scripts/import-world-cup-2018.mjs`.
-- O Dashboard oferece pausa para o replay decorativo do campo. Por padrão, o site segue a preferência de movimento do dispositivo.
+- O Dashboard oferece pausa para o replay do campo. As animações estão ativas por padrão. Em **Configurações**, selecione **Seguir o sistema** para aplicar a preferência de movimento reduzido do dispositivo.
 - Favoritos, coleções, filtros e comparações ficam no navegador atual. Para publicar ou redistribuir análises, observe os termos e a atribuição da fonte. [StatsBomb Open Data](https://github.com/hudl/open-data)
 - Use **Copiar link** no comparador para compartilhar atletas, métricas e a dupla em destaque. O mapa preserva o recorte no endereço e oferece densidade, eventos individuais e contagem de passes por zona de origem. As exportações do mapa e do comparador incluem a revisão da fonte.
 

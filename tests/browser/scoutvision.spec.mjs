@@ -34,6 +34,11 @@ test("Dashboard: movimento reduzido, pausa e rodapé sem imagem", async ({ page 
   await page.emulateMedia({ reducedMotion: "reduce" });
   const response = await page.goto("/");
   expect(response.headers()["x-frame-options"]).toBe("DENY");
+  await expect(page.locator("html")).toHaveAttribute("data-motion", "full");
+  await expect(page.getByRole("button", { name: "Pausar animação do campo" })).toBeVisible();
+  await expect(page.locator(".world-cup-ball")).toHaveAttribute("visibility", "visible");
+  await page.context().addCookies([{ name: "scout-motion", value: "system", url: page.url() }]);
+  await page.reload();
   await expect(page.getByRole("button", { name: "Pausar animação do campo" })).toBeHidden();
   await expect(page.locator(".world-cup-ball")).toHaveAttribute("visibility", "hidden");
   expect(images.some((url) => url.includes("statsbomb.png"))).toBe(false);
